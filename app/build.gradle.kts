@@ -83,4 +83,7 @@ dependencies {
     implementation(libs.androidx.material.icons.extended)
     //google play services
     implementation(libs.play.services.auth)
+
+    //material
+    implementation("androidx.compose.material3:material3-android:1.2.1")
 }

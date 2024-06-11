@@ -43,7 +43,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.example.expensetracker.DashBoardScreenRoute
+import com.example.expensetracker.MainScreenRoute
 import com.example.expensetracker.R
 import com.example.expensetracker.utils.CommonProgressBar
 import com.example.expensetracker.viewmodel.AuthViewModel
@@ -51,7 +51,7 @@ import com.example.expensetracker.viewmodel.AuthViewModel
 @Composable
 fun LoginScreen(viewModel: AuthViewModel, navController: NavHostController) {
     if (viewModel.signIn.value || viewModel.currentUser!=null) {
-        navController.navigate(DashBoardScreenRoute) {
+        navController.navigate(MainScreenRoute) {
             popUpTo(0)
         }
     }
