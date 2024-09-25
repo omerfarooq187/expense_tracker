@@ -1,5 +1,6 @@
 package com.example.expensetracker.screens.auth
 
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
@@ -36,7 +37,9 @@ import com.example.expensetracker.SignupScreenRoute
 import com.example.expensetracker.utils.CommonProgressBar
 import com.example.expensetracker.viewmodel.AuthViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.common.api.ApiException
+import javax.inject.Inject
 
 @Composable
 fun WelcomeScreen(viewModel: AuthViewModel, navController: NavHostController) {
@@ -46,16 +49,19 @@ fun WelcomeScreen(viewModel: AuthViewModel, navController: NavHostController) {
         }
     }
     val authState = viewModel.authResult.collectAsState()
-    val launcherActivity = rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()) {  result->
-        val data = result.data ?: return@rememberLauncherForActivityResult
-        val task = GoogleSignIn.getSignedInAccountFromIntent(data)
+
+    val launcherActivity = rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()) { result ->
+        val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
         try {
             val account = task.getResult(ApiException::class.java)
-            account?.idToken?.let {  id->
-                viewModel.signInWithGoogle(id)
+            account?.idToken?.let {
+                viewModel.signInWithGoogle(it)
+                Log.d("Token",it)
+            }?.run {
+                Log.d("Token","Null or Empty")
             }
-        } catch (e:Exception) {
-            e.printStackTrace()
+        } catch (e: ApiException) {
+            Log.e("GoogleSignIn", "Google sign-in failed with error code: ${e.statusCode}", e)
         }
     }
     if (authState.value?.isSuccess == true) {
@@ -108,7 +114,8 @@ fun WelcomeScreen(viewModel: AuthViewModel, navController: NavHostController) {
             )
             OutlinedButton(
                 onClick = {
-                          val signInIntent = viewModel.googleSignInClient().signInIntent
+                    val signInIntent = viewModel.getGoogleSignInClient()
+                    Log.d("Intent","Running ...")
                     launcherActivity.launch(signInIntent)
                 },
                 modifier = Modifier

@@ -1,30 +1,31 @@
 package com.example.expensetracker.data.repository
 
+import android.util.Log
 import androidx.compose.runtime.mutableStateOf
-import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import javax.inject.Inject
-import kotlin.math.sign
 
 class AuthRepository @Inject constructor(
-    private val auth: FirebaseAuth,
-    private val googleSignInClient: GoogleSignInClient
+    private val auth: FirebaseAuth
 ) {
     val inProcess = mutableStateOf(false)
     val signIn = mutableStateOf(false)
     val currentUser = auth.currentUser
-    fun getGoogleSignInClient() = googleSignInClient
-    fun firebaseAuthWithGoogle(idToken: String) :Result<FirebaseAuth>{
+
+    fun firebaseAuthWithGoogle(idToken: String) {
         inProcess.value = true
-        return try {
-            val credential = GoogleAuthProvider.getCredential(idToken,null)
-            auth.signInWithCredential(credential)
-            inProcess.value = false
-            Result.success(auth)
-        } catch (e:Exception) {
-            inProcess.value = false
-            Result.failure(e)
+        val credential = GoogleAuthProvider.getCredential(idToken,null)
+        auth.signInWithCredential(credential).addOnCompleteListener { task->
+            if (task.isSuccessful) {
+                inProcess.value = false
+                signIn.value = true
+                Log.d("User", task.result.user.toString())
+            } else {
+                inProcess.value = false
+                signIn.value = false
+                Log.d("Failure", task.exception.toString())
+            }
         }
     }
 

@@ -2,20 +2,19 @@ package com.example.expensetracker
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
-import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.expensetracker.screens.transactions.IncomeScreen
 import com.example.expensetracker.screens.auth.LoginScreen
 import com.example.expensetracker.screens.auth.SignupScreen
 import com.example.expensetracker.screens.auth.WelcomeScreen
 import com.example.expensetracker.screens.main.MainScreen
+import com.example.expensetracker.screens.transactions.ExpenseScreen
 import com.example.expensetracker.ui.theme.ExpenseTrackerTheme
 import com.example.expensetracker.viewmodel.AuthViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -43,6 +42,10 @@ object SignupScreenRoute
 object LoginScreenRoute
 @Serializable
 object MainScreenRoute
+@Serializable
+object IncomeScreenRoute
+@Serializable
+object ExpenseScreenRoute
 
 @Composable
 fun App(viewModel: AuthViewModel) {
@@ -58,7 +61,13 @@ fun App(viewModel: AuthViewModel) {
             SignupScreen(viewModel, navController)
         }
         composable<MainScreenRoute> {
-            MainScreen()
+            MainScreen(navController)
+        }
+        composable<IncomeScreenRoute> {
+            IncomeScreen(navController)
+        }
+        composable<ExpenseScreenRoute> {
+            ExpenseScreen(navController)
         }
     }
 }
